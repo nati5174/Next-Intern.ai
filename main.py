@@ -28,3 +28,16 @@ elif role == "Resume Creatr":
             #pdf_new = pdf.generate_pdf(new_resume)
             #st.download_button(label ="Download PDF", data=pdf_new, file_name="tailered_resume.pdf", mime="application/pdf")
 
+elif role == "Cover letter creatr":
+    st.subheader("Cover Letter")
+    uploaded_file = st.file_uploader("Upload your Cover Letter or data about yourself!")
+    job_description = st.text_area("Enter Job Description")
+
+    if uploaded_file and job_description:
+        if st.button("Generate Cover-letter"):
+            with st.spinner('Generating...'):
+                cover = pdf.extract_pdf_info(uploaded_file)
+                new_cover = llm_agent.generate_new_resume(cover, job_description)
+                
+            st.success("Done!")
+            st.write(new_cover)
