@@ -7,13 +7,13 @@ def extract_pdf_info(pdf):
 
     if pages > 1:
         text = []
-        for i in range(len(pages)):
+        for i in range(pages):
             page = reader.pages[i]
             text.append(page.extract_text())
         return " ".join(text) 
 
     else:
-        return reader.pages.extract_text()  
+        return reader.pages[0].extract_text()  
 
 
 
