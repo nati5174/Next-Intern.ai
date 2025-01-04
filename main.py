@@ -1,7 +1,6 @@
 import streamlit as st
-import llm_agent
+import langchain_helper
 import pdf
-import time
 
 
 
@@ -21,7 +20,7 @@ elif role == "Resume Creatr":
         if st.button("Generate Resume"):
             with st.spinner('Generating...'):
                 resume = pdf.extract_pdf_info(uploaded_file)
-                new_resume = llm_agent.generate_new_resume(resume, job_description)
+                new_resume = langchain_helper.generate_new_resume(resume, job_description)
                 
             st.success("Done!")
             st.write(new_resume)
@@ -37,7 +36,7 @@ elif role == "Cover letter creatr":
         if st.button("Generate Cover-letter"):
             with st.spinner('Generating...'):
                 cover = pdf.extract_pdf_info(uploaded_file)
-                new_cover = llm_agent.generate_new_resume(cover, job_description)
+                new_cover = langchain_helper.generate_new_resume(cover, job_description)
                 
             st.success("Done!")
             st.write(new_cover)
