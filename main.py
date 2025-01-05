@@ -7,7 +7,7 @@ import pdf
 
 st.title("Next-Intern")
 
-role  = st.sidebar.selectbox("Pick Something", ("Home","Resume Creatr", "Cover letter creatr"))
+role  = st.sidebar.selectbox("Pick Something", ("Home","Resume Creatr", "Cover letter creatr", "Practise Interview"))
 
 if role == "Home":
     st.write("Next Intern is a web-app which helps students in getting their next internship. The app provides, users with a oppurtunity to find internships based on location and desired position, a resume generator based on job your applying to, and a cover letter generator based off of the job your applying to.")
@@ -40,3 +40,8 @@ elif role == "Cover letter creatr":
                 
             st.success("Done!")
             st.write(new_cover)
+
+
+
+elif role == "Practise Interview":
+    st.subheader("Mock Interview")            
