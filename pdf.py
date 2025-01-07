@@ -6,7 +6,8 @@ import fitz
 
 class PDF():
 
-    def extract_pdf_info(pdf):
+
+    def extract_pdf_info(sekf, pdf):
 
         reader = PdfReader(pdf)
         pages = len(reader.pages)
@@ -22,23 +23,25 @@ class PDF():
             return reader.pages[0].extract_text()
 
      #needed for mock interview   
-    def read_pdf_as_list(directory: str):
-        doc = fitz.open(directory)
+     #not my code nor implementation
+    def read_pdf_as_list(self, file):
+    # Ensure the uploaded file is read as bytes
+        file_data = file.read()
+        doc = fitz.open(stream=file_data, filetype="pdf")
         documents = []
         for i, page in enumerate(doc):
             text = page.get_text()
-            # Create a Document object for each page
             documents.append(Document(
                 page_content=text,
-                metadata={"page": i + 1, "source": directory}
+                metadata={"page": i + 1, "source": "Uploaded File"}
             ))
-        return documents  
+        return documents
 
 
     #for splitting the data when preparing for stored pdf sata in Vector DB
-    def chunk_data(doc, chunk_size, chunk_overlap):
-        splitter = RecursiveCharacterTextSplitter(chunk_size, chunk_overlap)
-        new_doc = splitter.split_document(doc)
+    def chunk_data(self, doc, chunk_size=500, chunk_overlap=50):
+        splitter = RecursiveCharacterTextSplitter(chunk_size=chunk_size, chunk_overlap=chunk_overlap)
+        new_doc = splitter.split_documents(doc)
         return new_doc
 
 
