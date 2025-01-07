@@ -1,9 +1,11 @@
 import streamlit as st
 import langchain_helper
 import pdf
+import vectordb
+from langchain.schema import AIMessage,HumanMessage,SystemMessage
+from constants import QUERY
 
-
-
+pdf_instance = pdf.PDF()
 
 st.title("Next-Intern")
 
@@ -44,4 +46,29 @@ elif role == "Cover letter creatr":
 
 
 elif role == "Practise Interview":
-    st.subheader("Mock Interview")            
+    st.subheader("Mock Interview")
+    upload_resume = st.file_uploader("Upload you resume")
+    #upload_job = st.file_uploader("Upload job info")
+
+    if upload_resume:
+        chain = langchain_helper.LangchiainHelper().mock_interview()
+        doc = pdf_instance.read_pdf_as_list(upload_resume)
+        docs = pdf_instance.chunk_data(doc)
+        db = vectordb.VectorDB()
+        index = db.index_init(docs)
+
+        if st.button("Start inerview"):
+            #stores in documents into databse as vectors
+            messages = [SystemMessage(QUERY),]
+            s = "Based off of my resume give me potential inerview questions, only 1 at a time. Once I've replied and you feel satisifed with the question, go to the next question. Dont go to next question unless a good reply"
+            ai_response = langchain_helper.LangchiainHelper().retrieve_answer(s, chain, index)
+            print("ai: ",ai_response)
+
+
+            while True:
+                user_input = input("you: ")
+                messages.append(HumanMessage(content=user_input))
+                ai_response = langchain_helper.LangchiainHelper().retrieve_answer(user_input, chain, index)
+                print("ai: ",ai_response)
+                messages.append(AIMessage(content=ai_response))            
+
