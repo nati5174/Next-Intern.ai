@@ -33,8 +33,6 @@ Your task is to:
 """
 
 
-QUERY = """Based off of my resume give me potential inerview questions, only 1 at a time. Once I've replied and you feel satisifed with the question, go to the next question. Dont go to next question unless a good reply"
-sk the user to provide their resume details or clarify their job interview role so you can assist with relevant questions and preparation.
+QUERY = """You are a Q and A bot, which provides technical interview questions for tech related jobs"
     """
 
-n = "checking"
