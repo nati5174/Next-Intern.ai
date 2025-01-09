@@ -11,9 +11,18 @@ import vectordb
 
 from constants import RESUME_TEMPLATE, COVER_LETTER_TEMPLATE
 
+import os
+from dotenv import load_dotenv
+
+# Load the environment variables from the .env file
+load_dotenv()
+
+
+open_ai_key= os.getenv('openai_key')
+pinecone_key= os.getenv('pinecone_key')
 
 class LangchiainHelper():
-    openai_key = ''
+    openai_key = open_ai_key
 
     llm = ChatOpenAI(model="gpt-4", temperature=0.7, openai_api_key=openai_key)
     embeddings = OpenAIEmbeddings(openai_api_key=openai_key)
@@ -21,11 +30,11 @@ class LangchiainHelper():
 
     os.environ['OPENAI_API_KEY'] = openai_key
 
-    def generate_new_resume(resume, job_description, llm):
+    def generate_new_resume(self,resume, job_description):
 
         prompt = PromptTemplate(input_variables=['resume', 'job_description'], template=RESUME_TEMPLATE)
 
-        chain = LLMChain(llm=llm, prompt=prompt)
+        chain = LLMChain(llm=self.llm,prompt=prompt)
 
         response = chain.run({"resume": resume, "job_description": job_description})
             
@@ -33,11 +42,11 @@ class LangchiainHelper():
         return response
 
 
-    def generate_new_cover_letter(cover, job_description, llm):
+    def generate_new_cover_letter(self,cover, job_description):
 
         prompt = PromptTemplate(input_variables=['cover', 'job_description'], template=COVER_LETTER_TEMPLATE)
 
-        chain = LLMChain(llm=llm, prompt=prompt)
+        chain = LLMChain(llm=self.llm, prompt=prompt)
 
         response = chain.run({"cover": cover, "job_description": job_description})
             
