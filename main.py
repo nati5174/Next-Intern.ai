@@ -1,15 +1,23 @@
 import streamlit as st
 import langchain_helper
 import pdf
+import pinecone
 import vectordb
 from langchain.schema import AIMessage,HumanMessage,SystemMessage
+from langchain.vectorstores import Pinecone as LangchainPinecone
 from constants import QUERY
+
+
+# Initialize session state if not already initialized
+if 'user_input' not in st.session_state:
+    st.session_state.user_input = ""
+
 
 pdf_instance = pdf.PDF()
 
 st.title("Next-Intern")
 
-role  = st.sidebar.selectbox("Pick Something", ("Home","Resume Creatr", "Cover letter creatr", "Practise Interview"))
+role  = st.sidebar.selectbox("Pick Something", ("Home","Resume Creatr", "Cover letter creatr", "testing"))
 
 if role == "Home":
     st.write("Next Intern is a web-app which helps students in getting their next internship. The app provides, users with a oppurtunity to find internships based on location and desired position, a resume generator based on job your applying to, and a cover letter generator based off of the job your applying to.")
@@ -43,32 +51,21 @@ elif role == "Cover letter creatr":
             st.success("Done!")
             st.write(new_cover)
 
-
-
-elif role == "Practise Interview":
-    st.subheader("Mock Interview")
-    upload_resume = st.file_uploader("Upload you resume")
-    #upload_job = st.file_uploader("Upload job info")
-
-    if upload_resume:
-        chain = langchain_helper.LangchiainHelper().mock_interview()
-        doc = pdf_instance.read_pdf_as_list(upload_resume)
-        docs = pdf_instance.chunk_data(doc)
+elif role == "testing":
+    rle = st.selectbox("Pick Role", ("ML", "DL"))
+    if rle:
         db = vectordb.VectorDB()
-        index = db.index_init(docs)
+        pinecone_client = db.pinecone_client
+        index = pinecone_client.Index("kalu2")
+        embedding= db.embedding
+        index = LangchainPinecone(index=index, embedding=embedding, text_key="text")
 
-        if st.button("Start inerview"):
-            #stores in documents into databse as vectors
-            messages = [SystemMessage(QUERY),]
-            s = "Based off of my resume give me potential inerview questions, only 1 at a time. Once I've replied and you feel satisifed with the question, go to the next question. Dont go to next question unless a good reply"
-            ai_response = langchain_helper.LangchiainHelper().retrieve_answer(s, chain, index)
-            print("ai: ",ai_response)
-
-
-            while True:
-                user_input = input("you: ")
-                messages.append(HumanMessage(content=user_input))
-                ai_response = langchain_helper.LangchiainHelper().retrieve_answer(user_input, chain, index)
-                print("ai: ",ai_response)
-                messages.append(AIMessage(content=ai_response))            
-
+        chain = langchain_helper.LangchiainHelper().mock_interview()
+        messages = [SystemMessage(QUERY),]
+        s = "Give me a list of 10 software related questions"
+        ai_response = langchain_helper.LangchiainHelper().retrieve_answer(s, chain, index)
+        st.write(ai_response)
+        you = st.text_input("You: ")
+        if you:
+            ai_response1 = langchain_helper.LangchiainHelper().retrieve_answer(you, chain, index)
+            st.write(ai_response1)
