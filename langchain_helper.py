@@ -2,18 +2,23 @@ import os
 from langchain.llms import OpenAI
 from langchain.prompts import PromptTemplate
 from langchain.schema.runnable import RunnableSequence
+from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.chains import SequentialChain
 from langchain.chains import LLMChain
 from langchain.chat_models import ChatOpenAI  # Correct import for chat models
 from langchain.chains.question_answering import load_qa_chain
 import vectordb
+
 from constants import RESUME_TEMPLATE, COVER_LETTER_TEMPLATE
 
 
 class LangchiainHelper():
+    openai_key = ''
 
     llm = ChatOpenAI(model="gpt-4", temperature=0.7, openai_api_key=openai_key)
-    pineconedb = vectordb.VectorDB()
+    embeddings = OpenAIEmbeddings(openai_api_key=openai_key)
+    
+
     os.environ['OPENAI_API_KEY'] = openai_key
 
     def generate_new_resume(resume, job_description, llm):
@@ -52,6 +57,7 @@ class LangchiainHelper():
         result = self.retrieve_query(query, index)
         answer = chain.run(input_documents=result, question=query)
         return answer
+    
     
 
 
