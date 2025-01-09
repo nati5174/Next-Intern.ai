@@ -10,15 +10,20 @@ pdf_instance = pdf.PDF()
 import vectordb
 
 file = st.file_uploader("provide interview questions here")
-pinecone_key=""  # Replace with your Pinecone API key
-
+file1 = st.file_uploader("ADD NEW QUESTIONS, IF ALREADY PROVIDE QUESTIONS BEFORE")
+db = vectordb.VectorDB()
+name = "interview-questions3"
 
 if file:
-    name = "kalu2"
     doc = pdf_instance.read_pdf_as_list(file)
     docs = pdf_instance.chunk_data(doc)
-    db = vectordb.VectorDB()
     db.create_index(name)
     index = db.index_init(docs, name)
 
-
+if file1:
+    doc = pdf_instance.read_pdf_as_list(file1)
+    docs = pdf_instance.chunk_data(doc)
+   #embedding_model = db.embedding
+   #pinecone_client = db.pinecone_client
+   #index = pinecone_client.Index("interview-questions3")
+    index = db.index_init(docs, name)
