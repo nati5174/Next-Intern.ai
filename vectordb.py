@@ -5,13 +5,21 @@ import vectordb
 from langchain.vectorstores import Pinecone as LangchainPinecone
 from langchain.embeddings.openai import OpenAIEmbeddings
 
+import os
+from dotenv import load_dotenv
 
-os.environ["PINECONE_API_KEY"] = ""  # Replace with your Pinecone API key
+# Load the environment variables from the .env file
+load_dotenv()
+
+
+open_ai_key= os.getenv('openai_key')
+pinecone_key= os.getenv('pinecone_key')
 
 class VectorDB():
 
-    pinecone_key=""  # Replace with your Pinecone API key
-    open_api_key = '-'
+    pinecone_key= pinecone_key
+    open_api_key = open_ai_key
+
     dimension = 1536
     #index_name = "langchain"
     embedding = OpenAIEmbeddings(api_key =open_api_key )
