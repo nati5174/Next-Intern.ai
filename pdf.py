@@ -7,7 +7,7 @@ import fitz
 class PDF():
 
 
-    def extract_pdf_info(sekf, pdf):
+    def extract_pdf_info(self, pdf):
 
         reader = PdfReader(pdf)
         pages = len(reader.pages)
