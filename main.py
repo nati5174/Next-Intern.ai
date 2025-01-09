@@ -14,6 +14,7 @@ if 'user_input' not in st.session_state:
 
 
 pdf_instance = pdf.PDF()
+lang_instance = langchain_helper.LangchiainHelper()
 
 st.title("Next-Intern")
 
@@ -29,8 +30,8 @@ elif role == "Resume Creatr":
     if uploaded_file and job_description:
         if st.button("Generate Resume"):
             with st.spinner('Generating...'):
-                resume = pdf.extract_pdf_info(uploaded_file)
-                new_resume = langchain_helper.generate_new_resume(resume, job_description)
+                resume =pdf_instance.extract_pdf_info(uploaded_file)
+                new_resume = lang_instance.generate_new_resume(resume, job_description)
                 
             st.success("Done!")
             st.write(new_resume)
@@ -45,27 +46,33 @@ elif role == "Cover letter creatr":
     if uploaded_file and job_description:
         if st.button("Generate Cover-letter"):
             with st.spinner('Generating...'):
-                cover = pdf.extract_pdf_info(uploaded_file)
-                new_cover = langchain_helper.generate_new_resume(cover, job_description)
+                cover = pdf_instance.extract_pdf_info(uploaded_file)
+                new_cover = lang_instance.generate_new_resume(cover, job_description)
                 
             st.success("Done!")
             st.write(new_cover)
 
 elif role == "testing":
-    rle = st.selectbox("Pick Role", ("ML", "DL"))
-    if rle:
+    job = st.selectbox("Pick Role", ("Software", "Machine Learning", "Deep Learning", "Front-End", "Back-end")) 
+    level = st.selectbox("Pick level", ("Moderate", "Difficult"))  
+                       
+    if job and level:
         db = vectordb.VectorDB()
         pinecone_client = db.pinecone_client
-        index = pinecone_client.Index("kalu2")
+        index = pinecone_client.Index("interview-questions3")
         embedding= db.embedding
         index = LangchainPinecone(index=index, embedding=embedding, text_key="text")
 
         chain = langchain_helper.LangchiainHelper().mock_interview()
         messages = [SystemMessage(QUERY),]
-        s = "Give me a list of 10 software related questions"
+
+        s=f"Give me a list of 5 random {job} related questions, which are off dificulty {level}"
         ai_response = langchain_helper.LangchiainHelper().retrieve_answer(s, chain, index)
         st.write(ai_response)
-        you = st.text_input("You: ")
+
+        you = st.text_input("input question for answer")
         if you:
-            ai_response1 = langchain_helper.LangchiainHelper().retrieve_answer(you, chain, index)
-            st.write(ai_response1)
+             you = "Find out how" + you
+             ai_response1 = langchain_helper.LangchiainHelper().retrieve_answer(you, chain, index)
+             st.write(ai_response1)
+
