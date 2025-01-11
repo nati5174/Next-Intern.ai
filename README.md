@@ -19,7 +19,7 @@ The following libraries are required to run the project:
   Python-dotenv: To manage environment variables securely.
 
 
-git clone https://github.com/your-username/next-intern.git
+git clone repo
 cd next-intern
 
 # Create a virtual environment
